@@ -7,12 +7,14 @@ import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
 import lombok.AllArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 @AllArgsConstructor
 @Repository
 public class UserReactiveRepositoryAdapter implements UserGateway{
     private final  UserReactiveRepository repository;
+    private final TransactionalOperator txOperator;
 
     @Override
     public Mono<User> save(User user) {
@@ -41,7 +43,8 @@ public class UserReactiveRepositoryAdapter implements UserGateway{
                         saved.getTelephone(),
                         saved.getBaseSalary(),
                         saved.getRoleId()
-                ));
+                ))
+                .as(txOperator::transactional);
     }
 
     @Override

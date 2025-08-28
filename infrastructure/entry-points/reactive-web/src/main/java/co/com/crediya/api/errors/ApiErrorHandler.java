@@ -1,6 +1,6 @@
 package co.com.crediya.api.errors;
 
-import Exceptions.BusinessException;
+import exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
