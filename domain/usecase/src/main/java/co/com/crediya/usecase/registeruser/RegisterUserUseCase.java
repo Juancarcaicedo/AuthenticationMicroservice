@@ -1,5 +1,6 @@
 package co.com.crediya.usecase.registeruser;
 
+import Exceptions.BusinessException;
 import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateways.UserGateway;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +11,10 @@ public class RegisterUserUseCase {
     private  final UserGateway userGateway;
     public Mono<User> register(User user) {
         return userGateway.findByEmail(user.getEmail())
-                .flatMap(existing -> Mono.<User>error(new IllegalArgumentException("El correo ya está registrado")))
+                .flatMap(existing -> Mono.<User>error(new BusinessException("El correo ya está registrado")))
                 .switchIfEmpty(
                         userGateway.findByDocument(user.getDocument())
-                                .flatMap(existing -> Mono.<User>error(new IllegalArgumentException("El documento ya está registrado")))
+                                .flatMap(existing -> Mono.<User>error(new BusinessException("El documento ya está registrado")))
                                 .switchIfEmpty(userGateway.save(user))
                 );
     }
