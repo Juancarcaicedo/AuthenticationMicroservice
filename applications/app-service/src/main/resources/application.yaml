@@ -27,4 +27,4 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 logging:
   level:
-    root: DEBUG
+    root: INFO
