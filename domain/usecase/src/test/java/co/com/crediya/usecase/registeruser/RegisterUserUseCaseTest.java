@@ -3,6 +3,7 @@ package co.com.crediya.usecase.registeruser;
 import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateways.UserGateway;
 import exceptions.BusinessException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,8 @@ import reactor.test.StepVerifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,6 +27,13 @@ public class RegisterUserUseCaseTest {
 
     @InjectMocks
     private RegisterUserUseCase useCase;
+    @BeforeEach
+    void setUp() {
+        // Por defecto que no haya nada (en vez de null)
+        when(userGateway.findByEmail(anyString())).thenReturn(Mono.empty());
+        when(userGateway.findByDocument(anyString())).thenReturn(Mono.empty());
+        when(userGateway.save(any(User.class))).thenReturn(Mono.empty());
+    }
 
     private final User user = new User(
             null,
@@ -57,16 +67,18 @@ public class RegisterUserUseCaseTest {
                         e.getMessage().equals("El correo ya está registrado")) // lanzamos la excepcion personalizada creada
                 .verify();
     }
-// problema con este test esta devolviendo null
+
     @Test
     void shouldFailWhenDocumentAlreadyExists() {
-        when(userGateway.findByEmail(user.getEmail())).thenReturn(Mono.empty()); //
-        when(userGateway.findByDocument(user.getDocument())).thenReturn(Mono.just(user)); // ← documento ocupado
+        when(userGateway.findByEmail(user.getEmail())).thenReturn(Mono.empty());
+        when(userGateway.findByDocument(user.getDocument())).thenReturn(Mono.just(user));
+
         StepVerifier.create(useCase.register(user))
                 .expectErrorMatches(e -> e instanceof BusinessException &&
                         e.getMessage().equals("El documento ya está registrado"))
                 .verify();
     }
+
 
 
 }
