@@ -7,5 +7,18 @@ dependencies {
     implementation 'org.reactivecommons.utils:object-mapper-api:0.1.0'
 
     testImplementation 'org.reactivecommons.utils:object-mapper:0.1.0'
+    // pruebas
+    testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.8.RELEASE'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+}
+test {
+    useJUnitPlatform()
 }
 

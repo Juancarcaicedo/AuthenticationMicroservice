@@ -1,6 +1,7 @@
 server:
   port: 8080
-
+  include-message: always
+  include-stacktrace: never
 adapters:
   r2dbc:
     host: localhost

@@ -1,3 +1,16 @@
 dependencies {
     implementation project(':model')
+    // Dependencias para test unitario
+// JUnit 5 y plataforma alineada
+    testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.8.RELEASE'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
