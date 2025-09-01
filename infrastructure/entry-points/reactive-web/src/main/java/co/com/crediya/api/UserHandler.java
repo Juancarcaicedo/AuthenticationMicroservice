@@ -47,5 +47,15 @@ public class UserHandler {
                             });
                 });
     }
+    public Mono<ServerResponse> getUserByDocument(ServerRequest request) {
+        String document = request.pathVariable("document");
+        log.info("Consultando usuario con documento: {}", document);
+
+        return registerUserUseCase.findByDocument(document)
+                .map(userMapper::toResponse)
+                .flatMap(response -> ServerResponse.ok().bodyValue(response))
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
 
 }
