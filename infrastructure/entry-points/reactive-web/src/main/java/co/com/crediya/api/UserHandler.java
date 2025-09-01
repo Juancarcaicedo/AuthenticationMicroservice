@@ -2,6 +2,7 @@ package co.com.crediya.api;
 
 import co.com.crediya.api.dtos.UserRequestDTO;
 import co.com.crediya.api.mapper.UserMapper;
+import co.com.crediya.usecase.finduserbydocument.FindUserByDocumentUseCase;
 import co.com.crediya.usecase.registeruser.RegisterUserUseCase;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class UserHandler {
 
     private final RegisterUserUseCase registerUserUseCase;
+    private  final FindUserByDocumentUseCase findUserByDocumentUseCase;
     private final UserMapper userMapper;
     private final Validator validator;
     private static final Logger log = LoggerFactory.getLogger(UserHandler.class);
@@ -51,10 +53,9 @@ public class UserHandler {
         String document = request.pathVariable("document");
         log.info("Consultando usuario con documento: {}", document);
 
-        return registerUserUseCase.findByDocument(document)
+        return findUserByDocumentUseCase.execute(document)
                 .map(userMapper::toResponse)
-                .flatMap(response -> ServerResponse.ok().bodyValue(response))
-                .switchIfEmpty(ServerResponse.notFound().build());
+                .flatMap(ServerResponse.ok()::bodyValue);
     }
 
 
