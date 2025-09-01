@@ -10,108 +10,61 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-@AllArgsConstructor
 @Repository
-public class UserReactiveRepositoryAdapter implements UserGateway{
-    private final  UserReactiveRepository repository;
+public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
+        User,                   // Modelo de dominio
+        UserEntity,             // Entidad de infraestructura
+        Long,                   // Tipo de ID
+        UserReactiveRepository  // Repositorio Spring Data
+        > implements UserGateway {
+
+    private final UserReactiveRepository repository;
+    private final ObjectMapper mapper;
     private final TransactionalOperator txOperator;
+
+    public UserReactiveRepositoryAdapter(
+            UserReactiveRepository repository,
+            ObjectMapper mapper,
+            TransactionalOperator txOperator
+    ) {
+        super(repository, mapper, entity -> mapper.map(entity, User.class));
+        this.repository = repository;
+        this.mapper = mapper;
+        this.txOperator = txOperator;
+    }
 
     @Override
     public Mono<User> save(User user) {
-        UserEntity entity = new UserEntity(
-                null,
-                user.getName(),
-                user.getLastname(),
-                user.getAddress(),
-                user.getBirthDate(),
-                user.getEmail(),
-                user.getDocument(),
-                user.getTelephone(),
-                user.getBaseSalary(),
-                user.getRoleId()
-        );
-
+        UserEntity entity = mapper.map(user, UserEntity.class);
         return repository.save(entity)
-                .map(saved -> new User(
-                        saved.getUserId(),
-                        saved.getName(),
-                        saved.getLastname(),
-                        saved.getAddress(),
-                        saved.getBirthDate(),
-                        saved.getEmail(),
-                        saved.getDocument(),
-                        saved.getTelephone(),
-                        saved.getBaseSalary(),
-                        saved.getRoleId()
-                ))
+                .map(saved -> mapper.map(saved, User.class))
                 .as(txOperator::transactional);
     }
 
     @Override
     public Mono<User> findByName(String name) {
         return repository.findByName(name)
-                .map(entity -> new User(
-                        entity.getUserId(),
-                        entity.getName(),
-                        entity.getLastname(),
-                        entity.getAddress(),
-                        entity.getBirthDate(),
-                        entity.getEmail(),
-                        entity.getDocument(),
-                        entity.getTelephone(),
-                        entity.getBaseSalary(),
-                        entity.getRoleId()
-                ));
+                .map(entity -> mapper.map(entity, User.class));
     }
+
     @Override
     public Mono<User> findByEmail(String email) {
         return repository.findByEmail(email)
-                .map(entity -> new User(
-                        entity.getUserId(),
-                        entity.getName(),
-                        entity.getLastname(),
-                        entity.getAddress(),
-                        entity.getBirthDate(),
-                        entity.getEmail(),
-                        entity.getDocument(),
-                        entity.getTelephone(),
-                        entity.getBaseSalary(),
-                        entity.getRoleId()
-                ));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
     @Override
     public Mono<User> findByDocument(String document) {
         return repository.findByDocument(document)
-                .map(entity -> new User(
-                        entity.getUserId(),
-                        entity.getName(),
-                        entity.getLastname(),
-                        entity.getAddress(),
-                        entity.getBirthDate(),
-                        entity.getEmail(),
-                        entity.getDocument(),
-                        entity.getTelephone(),
-                        entity.getBaseSalary(),
-                        entity.getRoleId()
-                ));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
     @Override
     public Flux<User> findAll() {
         return repository.findAll()
-                .map(entity -> new User(
-                        entity.getUserId(),
-                        entity.getName(),
-                        entity.getLastname(),
-                        entity.getAddress(),
-                        entity.getBirthDate(),
-                        entity.getEmail(),
-                        entity.getDocument(),
-                        entity.getTelephone(),
-                        entity.getBaseSalary(),
-                        entity.getRoleId()
-                ));
+                .map(entity -> mapper.map(entity, User.class));
     }
 }
+
+
 
