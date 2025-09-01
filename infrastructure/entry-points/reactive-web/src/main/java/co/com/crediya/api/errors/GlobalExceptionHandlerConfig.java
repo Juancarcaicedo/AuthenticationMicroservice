@@ -71,6 +71,7 @@ public class GlobalExceptionHandlerConfig {
             return switch (be.getRule()) {
                 case EMAIL_ALREADY_EXISTS -> new Mapped(CONFLICT, "EMAIL_ALREADY_EXISTS", be.getMessage(), List.of(), Level.WARN);
                 case DOCUMENT_ALREADY_EXISTS -> new Mapped(CONFLICT, "DOCUMENT_ALREADY_EXISTS", be.getMessage(), List.of(), Level.WARN);
+                case USER_NOT_FOUND -> new Mapped(CONFLICT, "USER_NOT_FOUND",be.getMessage(),List.of(),Level.WARN);
             };
         }
 
